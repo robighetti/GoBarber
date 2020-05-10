@@ -6,9 +6,9 @@ import 'express-async-errors';
 
 import routes from './routes';
 import uploadConfig from './configs/upload';
-import AppError from './errors/AppError';
+import AppError from './shared/errors/AppError';
 
-import './database';
+import './shared/database';
 
 /*
   SOLID
@@ -34,8 +34,6 @@ app.use((err: Error, request: Request, response: Response, _: NextFunction) => {
       message: err.message,
     });
   }
-
-  console.error(err);
 
   return response.status(500).json({
     status: 'error',

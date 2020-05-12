@@ -1,23 +1,26 @@
 import { startOfHour } from 'date-fns';
-import { getCustomRepository } from 'typeorm';
+import { injectable, inject } from 'tsyringe';
 
-import Appointment from '../entities/Appointment';
-import AppointmentsRepository from '../repositories/AppointmentsRepository';
+import Appointment from '@modules/appointments/infra/typeorm/entities/Appointment';
+import IAppointmentsRepositories from '@modules/appointments/repositories/IAppointments.Repositories';
 
 import AppError from '../../../shared/errors/AppError';
 
-interface Request {
+interface IRequest {
   provider_id: string;
   date: Date;
 }
-
+@injectable()
 class CreateAppointmentService {
-  public async execute({ provider_id, date }: Request): Promise<Appointment> {
-    const appointmentsRepository = getCustomRepository(AppointmentsRepository);
+  constructor(
+    @inject('AppointmentsRepository')
+    private appointmentsRepository: IAppointmentsRepositories,
+  ) {}
 
+  public async execute({ provider_id, date }: IRequest): Promise<Appointment> {
     const appointmentDate = startOfHour(date);
 
-    const findAppointmentInSameDate = await appointmentsRepository.findByDate(
+    const findAppointmentInSameDate = await this.appointmentsRepository.findByDate(
       appointmentDate,
     );
 
@@ -26,13 +29,10 @@ class CreateAppointmentService {
     }
 
     /* cria uma nova instancia dos appointments */
-    const appointment = appointmentsRepository.create({
+    const appointment = await this.appointmentsRepository.create({
       provider_id,
       date: appointmentDate,
     });
-
-    /* grava no banco a instancia criada */
-    await appointmentsRepository.save(appointment);
 
     return appointment;
   }

@@ -2,15 +2,20 @@ import 'reflect-metadata';
 
 import FakeAppointmentsRepository from '../repositories/fakes/FakeAppointmentsRepository';
 import ListProviderAppointmentsService from './ListProviderAppointmentsService';
+import FakeCacheProvider from '@shared/container/providers/CacheProvider/fakes/FakeCacheProvider';
 
 let listProviderAppointmentsService: ListProviderAppointmentsService;
 let fakeAppointmentRepository: FakeAppointmentsRepository;
+let fakeCacheProvider: FakeCacheProvider;
 
 describe('ListProviderAppointmentsService', () => {
   beforeEach(() => {
     fakeAppointmentRepository = new FakeAppointmentsRepository();
+    fakeCacheProvider = new FakeCacheProvider();
+
     listProviderAppointmentsService = new ListProviderAppointmentsService(
       fakeAppointmentRepository,
+      fakeCacheProvider,
     );
   });
 

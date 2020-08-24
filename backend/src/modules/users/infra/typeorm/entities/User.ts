@@ -36,7 +36,7 @@ class User {
 
   @Expose({ name: 'avatar_url' })
   get getAvatarUrl(): string | null {
-    if (this.avatar) {
+    if (!this.avatar) {
       return null;
     }
 
